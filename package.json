@@ -1,5 +1,5 @@
 {
-  "name": "skellie",
+  "name": "react_timeline",
   "version": "0.0.1",
   "description": "basic react+npm+browserify+reactify+watchify skeleton",
   "main": "index.js",
@@ -13,7 +13,10 @@
   "author": "gannoncurran",
   "license": "ISC",
   "dependencies": {
-    "react": "^0.13.1"
+    "object-assign": "^2.0.0",
+    "react": "^0.13.1",
+    "react-tween-state": "0.0.5",
+    "tween-functions": "^1.0.1"
   },
   "devDependencies": {
     "browserify": "^9.0.8",

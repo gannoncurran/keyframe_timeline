@@ -1,5 +1,5 @@
 'use strict';
 var React = require('react');
-var ComponentName = require('./ComponentName.js');
+var KeyframeTimeline = require('./components/KeyframeTimeline.js');
 
-React.render(<ComponentName />, document.body);
+React.render(<KeyframeTimeline />, document.body);
