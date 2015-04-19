@@ -104,12 +104,28 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
 
   tlPercent = this.trimToRange(tlPercent, fromPercent, toPercent);
 
-  var t = this.totalDuration * ((tlPercent - fromPercent) / 100);
-  var b = this.keyframes[fromPercent].data.left;
-  var c = this.keyframes[toPercent].data.left;
-  var d = this.totalDuration * ((toPercent - fromPercent) / 100);
+  var currentTime = this.totalDuration * ((tlPercent - fromPercent) / 100);
+  // var beginValue = this.keyframes[fromPercent].data.left;
+  var beginProps = this.keyframes[fromPercent].data;
+  // var endValue = this.keyframes[toPercent].data.left;
+  var endProps = this.keyframes[toPercent].data;
+  var totalDuration = this.totalDuration * ((toPercent - fromPercent) / 100);
+  var defaultEasing = 'linear';
 
-  return tweenFunctions.linear(t, b, c, d);
+  return this.tweenProps(currentTime, beginProps, endProps, totalDuration, defaultEasing);
+
+};
+
+KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, totalDuration, defaultEasing) {
+
+  var allPropsTemplate = objectAssign({}, beginProps, endProps);
+  beginProps = objectAssign({}, allPropsTemplate, beginProps);
+  endProps = objectAssign({}, allPropsTemplate, endProps);
+
+  // console.log("beginProps:", beginProps);
+  // console.log("endProps:", endProps);
+
+  return tweenFunctions[defaultEasing](currentTime, beginProps.left, endProps.left, totalDuration);
 
 };
 
