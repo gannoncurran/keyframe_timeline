@@ -1,6 +1,7 @@
 var floatify = require('./floatify.js');
 var objectAssign = require('object-assign');
 var tweenFunctions = require('tween-functions');
+var ease = require('./penner-easing.js')
 
 function KeyframeCollection(options) {
 
@@ -82,10 +83,15 @@ KeyframeCollection.prototype.removeKeyframe = function(tlPos) {
 KeyframeCollection.prototype.getTween = function(tlPos) {
 
   var tlPos = floatify(tlPos);
+  console.log("tlPos", tlPos);
   var keyKeys = this.keyframeKeys;
 
+  var tlPercent 
+  if (this.valueMappedTl) {tlPercent = this.mapValueToPercent(tlPos)};
   tlPercent = this.mapValueToPercent(tlPos);
+  console.log("tlPercent mapValue:", tlPercent);
   tlPercent = this.trimToRange(tlPercent);
+  console.log("tlPercent trimToRange:", tlPercent);
 
   var fromPercent;
   var toPercent;
@@ -102,7 +108,9 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
     toPercent = keyKeys[keyKeys.length - 1];
   }
 
+  console.log("from percent and to percent:", fromPercent, toPercent)
   tlPercent = this.trimToRange(tlPercent, fromPercent, toPercent);
+  console.log("tlPercent after from/to rangetrim:", tlPercent);
 
   var currentTime = this.totalDuration * ((tlPercent - fromPercent) / 100);
   // var beginValue = this.keyframes[fromPercent].data.left;
@@ -112,20 +120,29 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
   var totalDuration = this.totalDuration * ((toPercent - fromPercent) / 100);
   var defaultEasing = 'linear';
 
+  // basevalue + ( (linear pc thru segment * easing factor) * to-from )
+
   return this.tweenProps(currentTime, beginProps, endProps, totalDuration, defaultEasing);
 
 };
 
 KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, totalDuration, defaultEasing) {
+  console.log("currentTime:", currentTime);
+  console.log("beginProps:", beginProps);
+  console.log("endProps:", endProps);
+  console.log("totalDuration:", totalDuration);
+  var tweenResult = objectAssign({}, beginProps, endProps);
+  var keys = Object.keys(tweenResult);
+  beginProps = objectAssign({}, tweenResult, beginProps);
+  endProps = objectAssign({}, tweenResult, endProps);
+  var currentProp;
 
-  var allPropsTemplate = objectAssign({}, beginProps, endProps);
-  beginProps = objectAssign({}, allPropsTemplate, beginProps);
-  endProps = objectAssign({}, allPropsTemplate, endProps);
+  for (var i = 0; i < keys.length; i ++) {
+    currentProp = keys[i];
+    tweenResult[currentProp] = tweenFunctions[defaultEasing](currentTime, beginProps[currentProp], endProps[currentProp], totalDuration);
+  }
 
-  // console.log("beginProps:", beginProps);
-  // console.log("endProps:", endProps);
-
-  return tweenFunctions[defaultEasing](currentTime, beginProps.left, endProps.left, totalDuration);
+  return tweenResult;
 
 };
 
