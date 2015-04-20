@@ -13,11 +13,15 @@ var fns = {
     return t * t;
   },
   'out-quad' : function (t){
-    return -1 * t * (t -2);
+    return -1 * t * (t - 2);
   },
   'in-out-quad' : function (t){
-    t = t / 2;
-    return (t * t) / 2;
+    t *= 2;
+    if (t < 1) {
+      return (t * t) / 2;
+    } else {
+      return -(((t - 1) * (t - 3)) - 1) / 2;
+    }
   },
   'in-cubic' : function (t){
     return t * t * t;

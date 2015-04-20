@@ -4,29 +4,30 @@ var Timeline = require('../helpers/timeline.js');
 var KeyframeCollection = require('../helpers/keyframe_collection.js');
 
 var lrTitleKeyframes = new KeyframeCollection({
-  tlStart: 15,
-  tlEnd: 60,
+  // tlStart: 15,
+  // tlEnd: 60,
   id: 'crackers',
-  DOMRef: 'thing'
+  DOMRef: 'thing',
+  easingType: 'in-out-quad'
 });
 lrTitleKeyframes.addKeyframe({
-  posType: '#',
-  tlPos: 20,
+  // posType: '#',
+  tlPos: 0,
   data: {
     left: 256,
     top: 0
   }
 });
 lrTitleKeyframes.addKeyframe({
-  posType: '#',
-  tlPos: 30,
+  // posType: '#',
+  tlPos: 20,
   data: {
     left: 150,
     top: 50
   }
 });
 lrTitleKeyframes.addKeyframe({
-  posType: '#',
+  // posType: '#',
   tlPos: 35,
   data: {
     left: 400,
@@ -34,8 +35,8 @@ lrTitleKeyframes.addKeyframe({
   }
 });
 lrTitleKeyframes.addKeyframe({
-  posType: '#',
-  tlPos: 50,
+  // posType: '#',
+  tlPos: 90,
   data: {
     left: 30,
     top: 0
@@ -73,7 +74,7 @@ var KeyframeTimeline = React.createClass({
   },
 
   transitionProp: function(fn, prop, targetValue, easingType) {
-    var easingType = easingType || tweenState.easingTypes.easeOutElastic;
+    var easingType = easingType || tweenState.easingTypes.linear;
     this.tweenState(fn, prop, {
       easing: easingType,
       duration: 500,
@@ -81,14 +82,29 @@ var KeyframeTimeline = React.createClass({
     });
   },
 
+  // handleSliderChange: function(e) {
+    // THIS PASSES KEYFRAME COLLECTION DATA INTO REACT-TWEEN-STATE
+    // WATCH OUT!! R-T-S EASING FNS ARE SHITTY AND NEED REFACTORING
+    // DIVIDE BY ZERO N STUFF. (FOR NOW OUT-ELASTIC IS MONKEY PATCHED)
+    // ALSO, SET DEFAULT EASING IN KEYFRAME COLL CONFIG TO LINEAR TO
+    // AVOID STACKED EASING.
+  //   e.preventDefault;
+  //   this.setState({
+  //     sliderValue: e.target.value
+  //   });
+  //   var tweenResultObj = lrTitleKeyframes.getTween(e.target.value);
+  //   this.transitionProp(function(state) {return state.lrTitle}, 'left', tweenResultObj.left);
+  //   this.transitionProp(function(state) {return state.lrTitle}, 'top', tweenResultObj.top);
+  // },
+
   handleSliderChange: function(e) {
+    // THIS IS THE HARDWIRED VERSION. SET EASING IN KEYFRAME COLLECTION TO
+    // YOUR FAVORITE FLAVOR.
     e.preventDefault;
     this.setState({
+      lrTitle: lrTitleKeyframes.getTween(e.target.value),
       sliderValue: e.target.value
     });
-    var tweenResultObj = lrTitleKeyframes.getTween(e.target.value);
-    this.transitionProp(function(state) {return state.lrTitle}, 'left', tweenResultObj.left);
-    this.transitionProp(function(state) {return state.lrTitle}, 'top', tweenResultObj.top);
   },
 
   handleLinkClick: function(e) {

@@ -9,6 +9,7 @@ function KeyframeCollection(options) {
   this.tlStart        = options.tlStart       || 0;
   this.tlEnd          = options.tlEnd         || 100;
   this.totalDuration  = options.totalDuration || 1000;
+  this.easingType     = options.easingType    || 'linear';
   this.valueMappedTl  = false;
   this.keyframeKeys   = [];
   this.keyframes      = {};
@@ -115,18 +116,23 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
 
 KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, easingType) {
 
-  var easingType = easingType || 'out-elastic';
+  var easingType = easingType || this.easingType;
 
   var tweenResult = objectAssign({}, beginProps, endProps);
   var keys = Object.keys(tweenResult);
   beginProps = objectAssign({}, tweenResult, beginProps);
   endProps = objectAssign({}, tweenResult, endProps);
   var easeFactor = ease[easingType](currentTime);
+  console.log("raw", currentTime);
+  console.log("eased", easeFactor);
   var currentProp;
+  var easedChange;
 
   for (var i = 0; i < keys.length; i ++) {
     currentProp = keys[i];
-    tweenResult[currentProp] = beginProps[currentProp] + ((currentTime * easeFactor) * (endProps[currentProp] - beginProps[currentProp]));
+    easedChange = easeFactor * (endProps[currentProp] - beginProps[currentProp]);
+    // console.log("easedChange", easedChange);
+    tweenResult[currentProp] = beginProps[currentProp] + easedChange;
   }
 
   return tweenResult;
