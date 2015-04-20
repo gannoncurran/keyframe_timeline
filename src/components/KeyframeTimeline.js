@@ -1,3 +1,5 @@
+'use strict';
+
 var React = require('react');
 var tweenState = require('react-tween-state');
 var Timeline = require('../helpers/timeline.js');
@@ -8,7 +10,7 @@ var lrTitleKeyframes = new KeyframeCollection({
   // tlEnd: 60,
   id: 'crackers',
   DOMRef: 'thing',
-  easingType: 'in-out-quad'
+  easingType: 'easeInOutQuad'
 });
 lrTitleKeyframes.addKeyframe({
   // posType: '#',

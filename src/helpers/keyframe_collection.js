@@ -1,6 +1,8 @@
+'use strict';
+
 var floatify = require('./floatify.js');
 var objectAssign = require('object-assign');
-var ease = require('./penner-easing.js')
+var tweenFunctions = require('tween-functions');
 
 function KeyframeCollection(options) {
 
@@ -107,32 +109,33 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
 
   tlPercent = this.trimToRange(tlPercent, fromPercent, toPercent);
 
-  var currentTimeInSegment = (tlPercent - fromPercent) / (toPercent - fromPercent);
+  var currentTime = this.totalDuration * ((tlPercent - fromPercent) / 100);
   var beginProps = this.keyframes[fromPercent].data;
   var endProps = this.keyframes[toPercent].data;
-  return this.tweenProps(currentTimeInSegment, beginProps, endProps);
+  var totalDuration = this.totalDuration * ((toPercent - fromPercent) / 100);
+
+  return this.tweenProps(currentTime, beginProps, endProps, totalDuration);
 
 };
 
-KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, easingType) {
+KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, totalDuration, easingType) {
+  // console.log("currentTime:", currentTime);
+  // console.log("beginProps:", beginProps);
+  // console.log("endProps:", endProps);
+  // console.log("totalDuration:", totalDuration);
 
+  var currentProp;
   var easingType = easingType || this.easingType;
 
   var tweenResult = objectAssign({}, beginProps, endProps);
   var keys = Object.keys(tweenResult);
+
   beginProps = objectAssign({}, tweenResult, beginProps);
   endProps = objectAssign({}, tweenResult, endProps);
-  var easeFactor = ease[easingType](currentTime);
-  console.log("raw", currentTime);
-  console.log("eased", easeFactor);
-  var currentProp;
-  var easedChange;
 
   for (var i = 0; i < keys.length; i ++) {
     currentProp = keys[i];
-    easedChange = easeFactor * (endProps[currentProp] - beginProps[currentProp]);
-    // console.log("easedChange", easedChange);
-    tweenResult[currentProp] = beginProps[currentProp] + easedChange;
+    tweenResult[currentProp] = tweenFunctions[easingType](currentTime, beginProps[currentProp], endProps[currentProp], totalDuration);
   }
 
   return tweenResult;
