@@ -4,13 +4,13 @@ var Timeline = require('../helpers/timeline.js');
 var KeyframeCollection = require('../helpers/keyframe_collection.js');
 
 var lrTitleKeyframes = new KeyframeCollection({
-  // tlStart: 15,
-  // tlEnd: 60,
+  tlStart: 15,
+  tlEnd: 60,
   id: 'crackers',
   DOMRef: 'thing'
 });
 lrTitleKeyframes.addKeyframe({
-  // posType: '#',
+  posType: '#',
   tlPos: 20,
   data: {
     left: 256,
@@ -18,7 +18,7 @@ lrTitleKeyframes.addKeyframe({
   }
 });
 lrTitleKeyframes.addKeyframe({
-  // posType: '#',
+  posType: '#',
   tlPos: 30,
   data: {
     left: 150,
@@ -26,16 +26,16 @@ lrTitleKeyframes.addKeyframe({
   }
 });
 lrTitleKeyframes.addKeyframe({
-  // posType: '#',
-  tlPos: 55,
+  posType: '#',
+  tlPos: 35,
   data: {
     left: 400,
     top: 25
   }
 });
 lrTitleKeyframes.addKeyframe({
-  // posType: '#',
-  tlPos: 80,
+  posType: '#',
+  tlPos: 50,
   data: {
     left: 30,
     top: 0
@@ -48,7 +48,6 @@ var KeyframeTimeline = React.createClass({
   getInitialState: function() {
     return {
       lrTitle: lrTitleKeyframes.getTween(0),
-      // left: lrTitleKeyframes.getTween(0),
       sliderValue: '0'
     };
   },
@@ -62,10 +61,6 @@ var KeyframeTimeline = React.createClass({
     var top = Math.floor(this.getTweeningValue(function(state) {
       return state.lrTitle
     }, 'top'));
-
-    // if (top !== top) {
-    //   debugger;
-    // }
 
     return (
       <div style={{margin: '40px'}}>
