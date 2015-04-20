@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(testValue) {
   var testValue = parseFloat(testValue);
   if (testValue !== testValue) {

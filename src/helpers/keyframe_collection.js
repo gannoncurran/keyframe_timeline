@@ -1,3 +1,5 @@
+'use strict';
+
 var floatify = require('./floatify.js');
 var objectAssign = require('object-assign');
 var tweenFunctions = require('tween-functions');
@@ -9,6 +11,7 @@ function KeyframeCollection(options) {
   this.tlStart        = options.tlStart       || 0;
   this.tlEnd          = options.tlEnd         || 100;
   this.totalDuration  = options.totalDuration || 1000;
+  this.easingType     = options.easingType    || 'linear';
   this.valueMappedTl  = false;
   this.keyframeKeys   = [];
   this.keyframes      = {};
@@ -84,6 +87,8 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
   var tlPos = floatify(tlPos);
   var keyKeys = this.keyframeKeys;
 
+  var tlPercent 
+  if (this.valueMappedTl) {tlPercent = this.mapValueToPercent(tlPos)};
   tlPercent = this.mapValueToPercent(tlPos);
   tlPercent = this.trimToRange(tlPercent);
 
@@ -104,12 +109,36 @@ KeyframeCollection.prototype.getTween = function(tlPos) {
 
   tlPercent = this.trimToRange(tlPercent, fromPercent, toPercent);
 
-  var t = this.totalDuration * ((tlPercent - fromPercent) / 100);
-  var b = this.keyframes[fromPercent].data.left;
-  var c = this.keyframes[toPercent].data.left;
-  var d = this.totalDuration * ((toPercent - fromPercent) / 100);
+  var currentTime = this.totalDuration * ((tlPercent - fromPercent) / 100);
+  var beginProps = this.keyframes[fromPercent].data;
+  var endProps = this.keyframes[toPercent].data;
+  var totalDuration = this.totalDuration * ((toPercent - fromPercent) / 100);
 
-  return tweenFunctions.linear(t, b, c, d);
+  return this.tweenProps(currentTime, beginProps, endProps, totalDuration);
+
+};
+
+KeyframeCollection.prototype.tweenProps = function(currentTime, beginProps, endProps, totalDuration, easingType) {
+  // console.log("currentTime:", currentTime);
+  // console.log("beginProps:", beginProps);
+  // console.log("endProps:", endProps);
+  // console.log("totalDuration:", totalDuration);
+
+  var currentProp;
+  var easingType = easingType || this.easingType;
+
+  var tweenResult = objectAssign({}, beginProps, endProps);
+  var keys = Object.keys(tweenResult);
+
+  beginProps = objectAssign({}, tweenResult, beginProps);
+  endProps = objectAssign({}, tweenResult, endProps);
+
+  for (var i = 0; i < keys.length; i ++) {
+    currentProp = keys[i];
+    tweenResult[currentProp] = tweenFunctions[easingType](currentTime, beginProps[currentProp], endProps[currentProp], totalDuration);
+  }
+
+  return tweenResult;
 
 };
 
